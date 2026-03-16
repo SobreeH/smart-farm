@@ -1,27 +1,210 @@
-#container {
-  text-align: center;
+ion-toolbar {
+  --background: transparent;
+  padding-top: env(safe-area-inset-top);
+  ion-title {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
 
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 1.4rem;
+  
+  ion-icon {
+    font-size: 1.8rem;
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #2dd36f, #1e90ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-background {
   position: absolute;
+  top: 0;
   left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  width: 100%;
+  height: 250px;
+  background: linear-gradient(135deg, rgba(45, 211, 111, 0.1) 0%, rgba(30, 144, 255, 0.1) 100%);
+  z-index: 0;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.main-content {
+  position: relative;
+  z-index: 1;
+  padding: 16px;
+  padding-top: 0;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 24px 8px 16px;
+  color: var(--ion-color-dark);
+}
 
-  color: #8c8c8c;
+.mt-4 {
+  margin-top: 32px;
+}
 
+/* Base Card Styles */
+ion-card {
   margin: 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  background: var(--ion-background-color, #ffffff);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
 }
 
-#container a {
-  text-decoration: none;
+/* Sensor Dashboard */
+.sensors-grid {
+  padding: 0;
+  ion-col {
+    padding: 6px;
+  }
+}
+
+.sensor-card {
+  height: 100%;
+
+  ion-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px 12px;
+  }
+
+  h3 {
+    margin: 12px 0 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ion-color-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .reading {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--ion-color-dark);
+    margin-top: auto;
+    
+    .unit {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-color-medium);
+      margin-left: 2px;
+    }
+    
+    &.text-sm {
+      font-size: 1.25rem;
+    }
+    
+    &.text-danger {
+      color: var(--ion-color-danger);
+    }
+  }
+}
+
+/* Alert State for PIR */
+.sensor-card.alert {
+  border: 1px solid var(--ion-color-danger);
+  background: rgba(var(--ion-color-danger-rgb), 0.03);
+  
+  animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(var(--ion-color-danger-rgb), 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(var(--ion-color-danger-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--ion-color-danger-rgb), 0); }
+}
+
+/* Control Cards */
+.controls-grid {
+  padding: 0;
+  ion-col {
+    padding: 6px;
+  }
+}
+
+.control-card {
+  .control-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+  }
+
+  .control-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ion-color-dark);
+    }
+  }
+
+  ion-select {
+    --background: var(--ion-color-light);
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    min-width: 100px;
+    
+    &::part(icon) {
+      color: var(--ion-color-medium);
+      opacity: 1;
+    }
+    &::part(text) {
+      color: var(--ion-color-dark);
+    }
+  }
+}
+
+/* Icon Wrappers */
+.icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  ion-icon {
+    font-size: 26px;
+  }
+
+  &.bg-primary-light { background: rgba(var(--ion-color-primary-rgb), 0.15); }
+  &.bg-secondary-light { background: rgba(var(--ion-color-secondary-rgb), 0.15); }
+  &.bg-tertiary-light { background: rgba(var(--ion-color-tertiary-rgb), 0.15); }
+  &.bg-success-light { background: rgba(var(--ion-color-success-rgb), 0.15); }
+  &.bg-warning-light { background: rgba(var(--ion-color-warning-rgb), 0.15); }
+  &.bg-danger-light { background: rgba(var(--ion-color-danger-rgb), 0.15); }
+  &.bg-medium-light { background: rgba(var(--ion-color-medium-rgb), 0.15); }
+  
+  /* Fallback if no specific class */
+  background: rgba(var(--ion-color-medium-rgb), 0.1);
 }

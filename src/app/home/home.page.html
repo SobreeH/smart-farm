@@ -1,107 +1,233 @@
-<ion-header>
-  <ion-toolbar color="success">
-    <ion-title>🌱 Smart Farm</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>
+      <div class="logo-wrapper">
+        <ion-icon name="leaf" color="success"></ion-icon>
+        <span class="gradient-text">Smart Farm</span>
+      </div>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content color="light">
+  <div class="header-background"></div>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Sensor Readings</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="full">
-        <ion-item>
-          <ion-label>Temperature</ion-label>
-          <ion-note slot="end" color="danger">{{ sensors.temperature }} °C</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label>Humidity</ion-label>
-          <ion-note slot="end" color="primary">{{ sensors.humidity }} %</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label>Soil Moisture</ion-label>
-          <ion-note slot="end" color="tertiary">{{ sensors.soilHumidity }} %</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label>Light Level</ion-label>
-          <ion-note slot="end" color="warning">{{ sensors.light }} %</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label>Water Level</ion-label>
-          <ion-note slot="end" color="primary">{{ sensors.waterLevel }} %</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label>Steam Level</ion-label>
-          <ion-note slot="end" color="danger">{{ sensors.steam }} %</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label>Motion (PIR)</ion-label>
-          <ion-note slot="end" color="medium">{{ sensors.pir ? 'Detected!' : 'Clear' }}</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label>Distance</ion-label>
-          <ion-note slot="end" color="secondary">{{ sensors.distance }} cm</ion-note>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+  <div class="main-content">
+    <h2 class="section-title">Environment Dashboard</h2>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Actuator Controls</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="full">
+    <ion-grid class="sensors-grid">
+      <ion-row>
+        <!-- Temperature -->
+        <ion-col size="6" size-md="4" size-lg="3">
+          <ion-card class="sensor-card">
+            <ion-card-content>
+              <div class="icon-wrapper bg-danger-light">
+                <ion-icon name="thermometer-outline" color="danger"></ion-icon>
+              </div>
+              <h3>Temperature</h3>
+              <div class="reading">{{ sensors.temperature }}<span class="unit">°C</span></div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        
+        <!-- Humidity -->
+        <ion-col size="6" size-md="4" size-lg="3">
+          <ion-card class="sensor-card">
+            <ion-card-content>
+              <div class="icon-wrapper bg-primary-light">
+                <ion-icon name="water-outline" color="primary"></ion-icon>
+              </div>
+              <h3>Humidity</h3>
+              <div class="reading">{{ sensors.humidity }}<span class="unit">%</span></div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        
+        <!-- Soil Moisture -->
+        <ion-col size="6" size-md="4" size-lg="3">
+          <ion-card class="sensor-card">
+            <ion-card-content>
+              <div class="icon-wrapper bg-tertiary-light">
+                <ion-icon name="color-fill-outline" color="tertiary"></ion-icon>
+              </div>
+              <h3>Soil Moisture</h3>
+              <div class="reading">{{ sensors.soilHumidity }}<span class="unit">%</span></div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        
+        <!-- Light Level -->
+        <ion-col size="6" size-md="4" size-lg="3">
+          <ion-card class="sensor-card">
+            <ion-card-content>
+              <div class="icon-wrapper bg-warning-light">
+                <ion-icon name="sunny-outline" color="warning"></ion-icon>
+              </div>
+              <h3>Light Level</h3>
+              <div class="reading">{{ sensors.light }}<span class="unit">%</span></div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
 
-        <ion-item>
-          <ion-select label="Water Pump" interface="popover" [(ngModel)]="controls.waterPump"
-            (ionChange)="updateControl('waterPump', $event)">
-            <ion-select-option value="OFF">OFF</ion-select-option>
-            <ion-select-option value="ON">ON</ion-select-option>
-            <ion-select-option value="AUTO">AUTO</ion-select-option>
-          </ion-select>
-        </ion-item>
+        <!-- Water Level -->
+        <ion-col size="6" size-md="4" size-lg="3">
+          <ion-card class="sensor-card">
+            <ion-card-content>
+              <div class="icon-wrapper bg-secondary-light">
+                <ion-icon name="beaker-outline" color="secondary"></ion-icon>
+              </div>
+              <h3>Water Level</h3>
+              <div class="reading">{{ sensors.waterLevel }}<span class="unit">%</span></div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
 
-        <ion-item>
-          <ion-select label="Cooling Fan" interface="popover" [(ngModel)]="controls.fan"
-            (ionChange)="updateControl('fan', $event)">
-            <ion-select-option value="OFF">OFF</ion-select-option>
-            <ion-select-option value="ON">ON</ion-select-option>
-            <ion-select-option value="AUTO">AUTO</ion-select-option>
-          </ion-select>
-        </ion-item>
+        <!-- Steam Level -->
+        <ion-col size="6" size-md="4" size-lg="3">
+          <ion-card class="sensor-card">
+            <ion-card-content>
+              <div class="icon-wrapper bg-danger-light">
+                <ion-icon name="cloud-outline" color="danger"></ion-icon>
+              </div>
+              <h3>Steam Level</h3>
+              <div class="reading">{{ sensors.steam }}<span class="unit">%</span></div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
 
-        <ion-item>
-          <ion-select label="Grow Light" interface="popover" [(ngModel)]="controls.led"
-            (ionChange)="updateControl('led', $event)">
-            <ion-select-option value="OFF">OFF</ion-select-option>
-            <ion-select-option value="ON">ON</ion-select-option>
-            <ion-select-option value="AUTO">AUTO</ion-select-option>
-          </ion-select>
-        </ion-item>
+        <!-- Distance -->
+        <ion-col size="6" size-md="4" size-lg="3">
+          <ion-card class="sensor-card">
+            <ion-card-content>
+              <div class="icon-wrapper bg-medium-light">
+                <ion-icon name="analytics-outline" color="medium"></ion-icon>
+              </div>
+              <h3>Distance</h3>
+              <div class="reading">{{ sensors.distance }}<span class="unit">cm</span></div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
 
-        <ion-item>
-          <ion-select label="Door (Servo)" interface="popover" [(ngModel)]="controls.servo"
-            (ionChange)="updateControl('servo', $event)">
-            <ion-select-option value="OFF">CLOSE</ion-select-option>
-            <ion-select-option value="ON">OPEN</ion-select-option>
-            <ion-select-option value="AUTO">AUTO</ion-select-option>
-          </ion-select>
-        </ion-item>
+        <!-- PIR Motion -->
+        <ion-col size="6" size-md="4" size-lg="3">
+          <ion-card class="sensor-card" [class.alert]="sensors.pir">
+            <ion-card-content>
+              <div class="icon-wrapper bg-medium-light" [class.bg-danger-light]="sensors.pir">
+                <ion-icon name="walk-outline" [color]="sensors.pir ? 'danger' : 'medium'"></ion-icon>
+              </div>
+              <h3>Motion (PIR)</h3>
+              <div class="reading text-sm" [class.text-danger]="sensors.pir">
+                {{ sensors.pir ? 'Detected!' : 'Clear' }}
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
-        <ion-item>
-          <ion-select label="Alarm (Buzzer)" interface="popover" [(ngModel)]="controls.alarm"
-            (ionChange)="updateControl('alarm', $event)">
-            <ion-select-option value="OFF">OFF</ion-select-option>
-            <ion-select-option value="ON">ON</ion-select-option>
-            <ion-select-option value="AUTO">AUTO</ion-select-option>
-          </ion-select>
-        </ion-item>
+    <h2 class="section-title mt-4">Actuator Controls</h2>
+    <ion-grid class="controls-grid">
+      <ion-row>
+        <!-- Water Pump -->
+        <ion-col size="12" size-md="6">
+          <ion-card class="control-card">
+            <ion-card-content class="control-content">
+              <div class="control-info">
+                <div class="icon-wrapper bg-primary-light">
+                  <ion-icon name="water" color="primary"></ion-icon>
+                </div>
+                <h3>Water Pump</h3>
+              </div>
+              <ion-select interface="popover" [(ngModel)]="controls.waterPump"
+                (ionChange)="updateControl('waterPump', $event)">
+                <ion-select-option value="OFF">OFF</ion-select-option>
+                <ion-select-option value="ON">ON</ion-select-option>
+                <ion-select-option value="AUTO">AUTO</ion-select-option>
+              </ion-select>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
 
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+        <!-- Cooling Fan -->
+        <ion-col size="12" size-md="6">
+          <ion-card class="control-card">
+            <ion-card-content class="control-content">
+              <div class="control-info">
+                <div class="icon-wrapper bg-medium-light">
+                  <ion-icon name="snow" color="medium"></ion-icon>
+                </div>
+                <h3>Cooling Fan</h3>
+              </div>
+              <ion-select interface="popover" [(ngModel)]="controls.fan"
+                (ionChange)="updateControl('fan', $event)">
+                <ion-select-option value="OFF">OFF</ion-select-option>
+                <ion-select-option value="ON">ON</ion-select-option>
+                <ion-select-option value="AUTO">AUTO</ion-select-option>
+              </ion-select>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
 
+        <!-- Grow Light -->
+        <ion-col size="12" size-md="6">
+          <ion-card class="control-card">
+            <ion-card-content class="control-content">
+              <div class="control-info">
+                <div class="icon-wrapper bg-warning-light">
+                  <ion-icon name="sunny" color="warning"></ion-icon>
+                </div>
+                <h3>Grow Light</h3>
+              </div>
+              <ion-select interface="popover" [(ngModel)]="controls.led"
+                (ionChange)="updateControl('led', $event)">
+                <ion-select-option value="OFF">OFF</ion-select-option>
+                <ion-select-option value="ON">ON</ion-select-option>
+                <ion-select-option value="AUTO">AUTO</ion-select-option>
+              </ion-select>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <!-- Door (Servo) -->
+        <ion-col size="12" size-md="6">
+          <ion-card class="control-card">
+            <ion-card-content class="control-content">
+              <div class="control-info">
+                <div class="icon-wrapper bg-tertiary-light">
+                  <ion-icon name="log-in" color="tertiary"></ion-icon>
+                </div>
+                <h3>Door (Servo)</h3>
+              </div>
+              <ion-select interface="popover" [(ngModel)]="controls.servo"
+                (ionChange)="updateControl('servo', $event)">
+                <ion-select-option value="OFF">CLOSE</ion-select-option>
+                <ion-select-option value="ON">OPEN</ion-select-option>
+                <ion-select-option value="AUTO">AUTO</ion-select-option>
+              </ion-select>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+
+        <!-- Alarm (Buzzer) -->
+        <ion-col size="12" size-md="6">
+          <ion-card class="control-card">
+            <ion-card-content class="control-content">
+              <div class="control-info">
+                <div class="icon-wrapper bg-danger-light">
+                  <ion-icon name="notifications" color="danger"></ion-icon>
+                </div>
+                <h3>Alarm (Buzzer)</h3>
+              </div>
+              <ion-select interface="popover" [(ngModel)]="controls.alarm"
+                (ionChange)="updateControl('alarm', $event)">
+                <ion-select-option value="OFF">OFF</ion-select-option>
+                <ion-select-option value="ON">ON</ion-select-option>
+                <ion-select-option value="AUTO">AUTO</ion-select-option>
+              </ion-select>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>
