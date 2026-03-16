@@ -1,20 +1,90 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-title>🌱 Smart Farm</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Sensor Readings</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="full">
+        <ion-item>
+          <ion-label>Temperature</ion-label>
+          <ion-note slot="end" color="danger">{{ sensors.temperature }} °C</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>Humidity</ion-label>
+          <ion-note slot="end" color="primary">{{ sensors.humidity }} %</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>Soil Moisture</ion-label>
+          <ion-note slot="end" color="tertiary">{{ sensors.soilHumidity }} %</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>Light Level</ion-label>
+          <ion-note slot="end" color="warning">{{ sensors.light }} %</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>Water Level</ion-label>
+          <ion-note slot="end" color="primary">{{ sensors.waterLevel }} %</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>Motion (PIR)</ion-label>
+          <ion-note slot="end" color="medium">{{ sensors.pir ? 'Detected!' : 'Clear' }}</ion-note>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Actuator Controls</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list lines="full">
+
+        <ion-item>
+          <ion-select label="Water Pump" interface="popover" [(ngModel)]="controls.waterPump"
+            (ionChange)="updateControl('waterPump', $event)">
+            <ion-select-option value="OFF">OFF</ion-select-option>
+            <ion-select-option value="ON">ON</ion-select-option>
+            <ion-select-option value="AUTO">AUTO</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-select label="Cooling Fan" interface="popover" [(ngModel)]="controls.fan"
+            (ionChange)="updateControl('fan', $event)">
+            <ion-select-option value="OFF">OFF</ion-select-option>
+            <ion-select-option value="ON">ON</ion-select-option>
+            <ion-select-option value="AUTO">AUTO</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-select label="Grow Light" interface="popover" [(ngModel)]="controls.led"
+            (ionChange)="updateControl('led', $event)">
+            <ion-select-option value="OFF">OFF</ion-select-option>
+            <ion-select-option value="ON">ON</ion-select-option>
+            <ion-select-option value="AUTO">AUTO</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-select label="Door (Servo)" interface="popover" [(ngModel)]="controls.servo"
+            (ionChange)="updateControl('servo', $event)">
+            <ion-select-option value="OFF">CLOSE</ion-select-option>
+            <ion-select-option value="ON">OPEN</ion-select-option>
+            <ion-select-option value="AUTO">AUTO</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>
