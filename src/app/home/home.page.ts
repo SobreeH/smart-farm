@@ -17,7 +17,8 @@ export class HomePage implements OnInit {
     light: 0,
     waterLevel: 0,
     steam: 0,
-    pir: false
+    pir: false,
+    distance: 0
   };
 
   // Variables to hold actuator control states
@@ -25,7 +26,8 @@ export class HomePage implements OnInit {
     waterPump: 'OFF',
     fan: 'OFF',
     led: 'OFF',
-    servo: 'OFF'
+    servo: 'OFF',
+    alarm: 'OFF'
   };
 
   // We will store our database reference here
@@ -71,6 +73,7 @@ export class HomePage implements OnInit {
         this.controls.fan = data.fan?.mode || 'OFF';
         this.controls.led = data.led?.mode || 'OFF';
         this.controls.servo = data.servo?.mode || 'OFF';
+        this.controls.alarm = data.alarm?.mode || 'OFF';
       }
     });
   }

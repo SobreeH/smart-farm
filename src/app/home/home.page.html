@@ -33,8 +33,16 @@
           <ion-note slot="end" color="primary">{{ sensors.waterLevel }} %</ion-note>
         </ion-item>
         <ion-item>
+          <ion-label>Steam Level</ion-label>
+          <ion-note slot="end" color="danger">{{ sensors.steam }} %</ion-note>
+        </ion-item>
+        <ion-item>
           <ion-label>Motion (PIR)</ion-label>
           <ion-note slot="end" color="medium">{{ sensors.pir ? 'Detected!' : 'Clear' }}</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label>Distance</ion-label>
+          <ion-note slot="end" color="secondary">{{ sensors.distance }} cm</ion-note>
         </ion-item>
       </ion-list>
     </ion-card-content>
@@ -79,6 +87,15 @@
             (ionChange)="updateControl('servo', $event)">
             <ion-select-option value="OFF">CLOSE</ion-select-option>
             <ion-select-option value="ON">OPEN</ion-select-option>
+            <ion-select-option value="AUTO">AUTO</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-select label="Alarm (Buzzer)" interface="popover" [(ngModel)]="controls.alarm"
+            (ionChange)="updateControl('alarm', $event)">
+            <ion-select-option value="OFF">OFF</ion-select-option>
+            <ion-select-option value="ON">ON</ion-select-option>
             <ion-select-option value="AUTO">AUTO</ion-select-option>
           </ion-select>
         </ion-item>
