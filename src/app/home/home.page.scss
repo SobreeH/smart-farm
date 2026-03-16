@@ -1,6 +1,7 @@
 ion-toolbar {
   --background: transparent;
   padding-top: env(safe-area-inset-top);
+
   ion-title {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -13,7 +14,7 @@ ion-toolbar {
   gap: 8px;
   font-weight: 800;
   font-size: 1.4rem;
-  
+
   ion-icon {
     font-size: 1.8rem;
   }
@@ -73,6 +74,7 @@ ion-card {
 /* Sensor Dashboard */
 .sensors-grid {
   padding: 0;
+
   ion-col {
     padding: 6px;
   }
@@ -103,18 +105,18 @@ ion-card {
     font-weight: 800;
     color: var(--ion-color-dark);
     margin-top: auto;
-    
+
     .unit {
       font-size: 1rem;
       font-weight: 600;
       color: var(--ion-color-medium);
       margin-left: 2px;
     }
-    
+
     &.text-sm {
       font-size: 1.25rem;
     }
-    
+
     &.text-danger {
       color: var(--ion-color-danger);
     }
@@ -125,19 +127,28 @@ ion-card {
 .sensor-card.alert {
   border: 1px solid var(--ion-color-danger);
   background: rgba(var(--ion-color-danger-rgb), 0.03);
-  
+
   animation: pulse-border 2s infinite;
 }
 
 @keyframes pulse-border {
-  0% { box-shadow: 0 0 0 0 rgba(var(--ion-color-danger-rgb), 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(var(--ion-color-danger-rgb), 0); }
-  100% { box-shadow: 0 0 0 0 rgba(var(--ion-color-danger-rgb), 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-danger-rgb), 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--ion-color-danger-rgb), 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-danger-rgb), 0);
+  }
 }
 
 /* Control Cards */
 .controls-grid {
   padding: 0;
+
   ion-col {
     padding: 6px;
   }
@@ -173,11 +184,12 @@ ion-card {
     border-radius: 12px;
     font-weight: 600;
     min-width: 100px;
-    
+
     &::part(icon) {
       color: var(--ion-color-medium);
       opacity: 1;
     }
+
     &::part(text) {
       color: var(--ion-color-dark);
     }
@@ -192,19 +204,39 @@ ion-card {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   ion-icon {
     font-size: 26px;
   }
 
-  &.bg-primary-light { background: rgba(var(--ion-color-primary-rgb), 0.15); }
-  &.bg-secondary-light { background: rgba(var(--ion-color-secondary-rgb), 0.15); }
-  &.bg-tertiary-light { background: rgba(var(--ion-color-tertiary-rgb), 0.15); }
-  &.bg-success-light { background: rgba(var(--ion-color-success-rgb), 0.15); }
-  &.bg-warning-light { background: rgba(var(--ion-color-warning-rgb), 0.15); }
-  &.bg-danger-light { background: rgba(var(--ion-color-danger-rgb), 0.15); }
-  &.bg-medium-light { background: rgba(var(--ion-color-medium-rgb), 0.15); }
-  
+  &.bg-primary-light {
+    background: rgba(var(--ion-color-primary-rgb), 0.15);
+  }
+
+  &.bg-secondary-light {
+    background: rgba(var(--ion-color-secondary-rgb), 0.15);
+  }
+
+  &.bg-tertiary-light {
+    background: rgba(var(--ion-color-tertiary-rgb), 0.15);
+  }
+
+  &.bg-success-light {
+    background: rgba(var(--ion-color-success-rgb), 0.15);
+  }
+
+  &.bg-warning-light {
+    background: rgba(var(--ion-color-warning-rgb), 0.15);
+  }
+
+  &.bg-danger-light {
+    background: rgba(var(--ion-color-danger-rgb), 0.15);
+  }
+
+  &.bg-medium-light {
+    background: rgba(var(--ion-color-medium-rgb), 0.15);
+  }
+
   /* Fallback if no specific class */
   background: rgba(var(--ion-color-medium-rgb), 0.1);
 }

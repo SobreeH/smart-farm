@@ -29,7 +29,7 @@
             </ion-card-content>
           </ion-card>
         </ion-col>
-        
+
         <!-- Humidity -->
         <ion-col size="6" size-md="4" size-lg="3">
           <ion-card class="sensor-card">
@@ -42,7 +42,7 @@
             </ion-card-content>
           </ion-card>
         </ion-col>
-        
+
         <!-- Soil Moisture -->
         <ion-col size="6" size-md="4" size-lg="3">
           <ion-card class="sensor-card">
@@ -55,7 +55,7 @@
             </ion-card-content>
           </ion-card>
         </ion-col>
-        
+
         <!-- Light Level -->
         <ion-col size="6" size-md="4" size-lg="3">
           <ion-card class="sensor-card">
@@ -158,8 +158,7 @@
                 </div>
                 <h3>Cooling Fan</h3>
               </div>
-              <ion-select interface="popover" [(ngModel)]="controls.fan"
-                (ionChange)="updateControl('fan', $event)">
+              <ion-select interface="popover" [(ngModel)]="controls.fan" (ionChange)="updateControl('fan', $event)">
                 <ion-select-option value="OFF">OFF</ion-select-option>
                 <ion-select-option value="ON">ON</ion-select-option>
                 <ion-select-option value="AUTO">AUTO</ion-select-option>
@@ -178,8 +177,7 @@
                 </div>
                 <h3>Grow Light</h3>
               </div>
-              <ion-select interface="popover" [(ngModel)]="controls.led"
-                (ionChange)="updateControl('led', $event)">
+              <ion-select interface="popover" [(ngModel)]="controls.led" (ionChange)="updateControl('led', $event)">
                 <ion-select-option value="OFF">OFF</ion-select-option>
                 <ion-select-option value="ON">ON</ion-select-option>
                 <ion-select-option value="AUTO">AUTO</ion-select-option>
@@ -198,8 +196,7 @@
                 </div>
                 <h3>Door (Servo)</h3>
               </div>
-              <ion-select interface="popover" [(ngModel)]="controls.servo"
-                (ionChange)="updateControl('servo', $event)">
+              <ion-select interface="popover" [(ngModel)]="controls.servo" (ionChange)="updateControl('servo', $event)">
                 <ion-select-option value="OFF">CLOSE</ion-select-option>
                 <ion-select-option value="ON">OPEN</ion-select-option>
                 <ion-select-option value="AUTO">AUTO</ion-select-option>
@@ -218,8 +215,7 @@
                 </div>
                 <h3>Alarm (Buzzer)</h3>
               </div>
-              <ion-select interface="popover" [(ngModel)]="controls.alarm"
-                (ionChange)="updateControl('alarm', $event)">
+              <ion-select interface="popover" [(ngModel)]="controls.alarm" (ionChange)="updateControl('alarm', $event)">
                 <ion-select-option value="OFF">OFF</ion-select-option>
                 <ion-select-option value="ON">ON</ion-select-option>
                 <ion-select-option value="AUTO">AUTO</ion-select-option>
