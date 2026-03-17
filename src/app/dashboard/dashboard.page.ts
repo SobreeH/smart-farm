@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore, collection, query, orderBy, getDocs, limit } from 'firebase/firestore';
+import { Chart, BarController, CategoryScale, LinearScale, BarElement, Legend, Tooltip } from 'chart.js';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+
+// Register Chart.js components required for the bar chart
+Chart.register(BarController, CategoryScale, LinearScale, BarElement, Legend, Tooltip);
 
 @Component({
   selector: 'app-dashboard',
@@ -46,7 +50,8 @@ export class DashboardPage implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    const app = initializeApp(this.firebaseConfig);
+    // Reuse existing Firebase app if already initialized (avoids "app already exists" error)
+    const app = getApps().length ? getApp() : initializeApp(this.firebaseConfig);
     this.firestore = getFirestore(app);
     this.fetchLogs();
   }
@@ -54,30 +59,30 @@ export class DashboardPage implements OnInit {
   async fetchLogs() {
     const logsRef = collection(this.firestore, 'logs');
     const q = query(logsRef, orderBy('createdAt', 'desc'), limit(100));
-    
+
     try {
       const querySnapshot = await getDocs(q);
       this.logs = [];
       this.stats = { pumpCount: 0, alarmCount: 0, feedCount: 0 };
-      
+
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         this.logs.push(data);
-        
+
         // Count frequencies of "ON" or "OPEN" events
         if (data['type'] === 'water_on') this.stats.pumpCount++;
         if (data['type'] === 'alarm_on') this.stats.alarmCount++;
         if (data['type'] === 'feed_open') this.stats.feedCount++;
       });
 
-      // Update Chart
-      this.barChartData.datasets[0].data = [
-        this.stats.pumpCount,
-        this.stats.alarmCount,
-        this.stats.feedCount
-      ];
-      
-      this.barChartData = { ...this.barChartData };
+      // Update Chart — spread to trigger Angular change detection
+      this.barChartData = {
+        ...this.barChartData,
+        datasets: [{
+          ...this.barChartData.datasets[0],
+          data: [this.stats.pumpCount, this.stats.alarmCount, this.stats.feedCount]
+        }]
+      };
 
     } catch (e) {
       console.error("Error fetching logs:", e);

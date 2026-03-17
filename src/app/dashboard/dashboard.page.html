@@ -75,7 +75,7 @@
             </ion-icon>
             <ion-label>
               <h2>{{ log.type | titlecase }}</h2>
-              <p>{{ (log.timestamp?.seconds * 1000) | date:'MMM d, h:mm a' }}</p>
+              <p>{{ ((log.createdAt?.seconds ?? (log.timestamp / 1000)) * 1000) | date:'MMM d, h:mm a' }}</p>
             </ion-label>
           </ion-item>
         </ion-list>

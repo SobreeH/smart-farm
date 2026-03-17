@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, onValue, set, push, remove } from 'firebase/database';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getDatabase, ref, onValue, set, remove } from 'firebase/database';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 @Component({
@@ -35,27 +35,25 @@ export class HomePage implements OnInit {
   db: any;
   firestore: any;
 
+  // Guard against duplicate Firestore writes when RTDB fires multiple times
+  private processingKeys = new Set<string>();
+
   constructor() { }
 
   ngOnInit() {
-    // 1. Initialize Firebase with your exact credentials
     const firebaseConfig = {
       apiKey: "AIzaSyD1LTlZXjINs58NoHKhr67kgsxeHJmkkSc",
       databaseURL: "https://iot-final-12af4-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "iot-final-12af4"
     };
 
-    const app = initializeApp(firebaseConfig);
+    // Reuse existing Firebase app if already initialized (avoids "app already exists" error)
+    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
     this.db = getDatabase(app);
     this.firestore = getFirestore(app);
 
-    // 2. Listen for sensor updates
     this.listenToSensors();
-
-    // 3. Listen for control states
     this.listenToControls();
-
-    // 4. Listen for logs in RTDB and move them to Firestore
     this.bridgeLogsToFirestore();
   }
 
@@ -64,21 +62,27 @@ export class HomePage implements OnInit {
     onValue(logsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        // Data in RTDB logs is usually a list of push IDs
         Object.keys(data).forEach(async (key) => {
+          // Skip if this key is already being processed (prevents duplicates)
+          if (this.processingKeys.has(key)) return;
+          this.processingKeys.add(key);
+
           const logEntry = data[key];
           try {
-            // 1. Move to Firestore
+            // Move to Firestore — store createdAt as server timestamp for reliable ordering
             await addDoc(collection(this.firestore, 'logs'), {
               type: logEntry.type,
-              timestamp: logEntry.timestamp === 'timestamp' ? serverTimestamp() : logEntry.timestamp,
+              // Store the raw RTDB timestamp value (epoch ms from Arduino), not the literal string
+              timestamp: (typeof logEntry.timestamp === 'number') ? logEntry.timestamp : null,
               createdAt: serverTimestamp()
             });
-            // 2. Remove from RTDB to keep it clean
+            // Remove from RTDB once safely written to Firestore
             await remove(ref(this.db, `logs/${key}`));
-            console.log(`Moved log ${logEntry.type} to Firestore`);
+            console.log(`Moved log "${logEntry.type}" to Firestore`);
           } catch (e) {
             console.error("Error bridging log:", e);
+          } finally {
+            this.processingKeys.delete(key);
           }
         });
       }
@@ -90,7 +94,6 @@ export class HomePage implements OnInit {
     onValue(sensorsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        // Update our local variables with the database data
         this.sensors = data;
       }
     });
@@ -110,11 +113,9 @@ export class HomePage implements OnInit {
     });
   }
 
-  // 4. Function to trigger when a dropdown is changed
   updateControl(device: string, event: any) {
-    const mode = event.detail.value; // Ionic passes the value here
+    const mode = event.detail.value;
     const controlRef = ref(this.db, `controls/${device}/mode`);
-
     set(controlRef, mode)
       .then(() => console.log(`${device} updated to ${mode}`))
       .catch((error) => console.error("Error updating database: ", error));
