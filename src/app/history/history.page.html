@@ -5,7 +5,12 @@
     </ion-buttons>
     <ion-title>Sensor History</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="fetchSnapshots()">
+      <ion-button (click)="generateDemoData()" [disabled]="generating" color="warning">
+        <ion-icon slot="start" name="hammer-outline"></ion-icon>
+        <ion-label *ngIf="!generating">Demo Data</ion-label>
+        <ion-spinner *ngIf="generating" name="crescent"></ion-spinner>
+      </ion-button>
+      <ion-button (click)="fetchSnapshots()" [disabled]="generating">
         <ion-icon slot="icon-only" name="refresh"></ion-icon>
       </ion-button>
     </ion-buttons>

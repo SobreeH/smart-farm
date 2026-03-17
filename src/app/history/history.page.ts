@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
-  getFirestore, collection, query, orderBy, getDocs, limit, where, Timestamp
+  getFirestore, collection, query, orderBy, getDocs, limit, where, Timestamp, addDoc
 } from 'firebase/firestore';
 import {
   Chart, LineController, CategoryScale, LinearScale, PointElement,
   LineElement, Legend, Tooltip, Filler
 } from 'chart.js';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { ToastController } from '@ionic/angular';
 
 // Register Chart.js components for line charts
 Chart.register(LineController, CategoryScale, LinearScale, PointElement, LineElement, Legend, Tooltip, Filler);
@@ -42,6 +43,7 @@ export class HistoryPage implements OnInit {
   snapshots: SensorSnapshot[] = [];
   selectedRange: string = '24h';
   loading = true;
+  generating = false;
 
   // Summary stats
   stats = {
@@ -118,7 +120,7 @@ export class HistoryPage implements OnInit {
   public levelsChartType: ChartType = 'line';
   public levelsChartData: ChartData<'line'> = { labels: [], datasets: [] };
 
-  constructor() { }
+  constructor(private toastCtrl: ToastController) { }
 
   ngOnInit() {
     const app = getApps().length ? getApp() : initializeApp(this.firebaseConfig);
@@ -319,4 +321,73 @@ export class HistoryPage implements OnInit {
       ]
     };
   }
+
+  async generateDemoData() {
+    this.generating = true;
+    const toast = await this.toastCtrl.create({
+      message: 'Generating 7 days of demo data...',
+      duration: 5000,
+      position: 'bottom'
+    });
+    await toast.present();
+
+    try {
+      const now = new Date();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const snapshotsCol = collection(this.firestore, 'sensorSnapshots');
+      const logsCol = collection(this.firestore, 'logs');
+      const eventTypes = ['water_on', 'water_off', 'alarm_on', 'alarm_off', 'feed_open', 'feed_close'];
+
+      // 1. Generate 168 Snapshots
+      for (let i = 0; i < 168; i++) {
+        const timestamp = new Date(sevenDaysAgo.getTime() + i * 60 * 60 * 1000);
+        const hour = timestamp.getHours();
+        const tempBase = 25 + 5 * Math.sin((hour - 8) * Math.PI / 12);
+        const humBase = 60 - 15 * Math.sin((hour - 8) * Math.PI / 12);
+
+        await addDoc(snapshotsCol, {
+          temperature: Math.round((tempBase + Math.random() * 2) * 10) / 10,
+          humidity: Math.round((humBase + Math.random() * 5) * 10) / 10,
+          soilMoisture: Math.round(30 + Math.random() * 40),
+          light: Math.round(hour > 6 && hour < 18 ? 50 + Math.random() * 40 : Math.random() * 10),
+          waterLevel: Math.round(20 + Math.random() * 60),
+          steam: Math.round(Math.random() * 20),
+          distance: Math.round(5 + Math.random() * 50),
+          motion: Math.random() > 0.9,
+          timestamp: Timestamp.fromDate(timestamp)
+        });
+      }
+
+      // 2. Generate 75 Logs
+      for (let i = 0; i < 75; i++) {
+        const randomTime = new Date(sevenDaysAgo.getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000);
+        await addDoc(logsCol, {
+          type: eventTypes[Math.floor(Math.random() * eventTypes.length)],
+          createdAt: Timestamp.fromDate(randomTime),
+          timestamp: randomTime.getTime()
+        });
+      }
+
+      const successToast = await this.toastCtrl.create({
+        message: 'Demo data generated successfully!',
+        duration: 3000,
+        color: 'success',
+        position: 'bottom'
+      });
+      await successToast.present();
+      this.fetchSnapshots();
+    } catch (e: any) {
+      console.error('Error generating demo data:', e);
+      const errorToast = await this.toastCtrl.create({
+        message: 'Failed to generate data: ' + e.message,
+        duration: 5000,
+        color: 'danger',
+        position: 'bottom'
+      });
+      await errorToast.present();
+    } finally {
+      this.generating = false;
+    }
+  }
 }
+
