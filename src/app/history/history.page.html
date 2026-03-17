@@ -1,0 +1,214 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sensor History</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="fetchSnapshots()">
+        <ion-icon slot="icon-only" name="refresh"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Sensor History</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="history-content">
+    <!-- Time Range Selector -->
+    <ion-segment [value]="selectedRange" (ionChange)="onRangeChange($event)" class="range-segment">
+      <ion-segment-button value="24h">
+        <ion-label>24 Hours</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="7d">
+        <ion-label>7 Days</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="30d">
+        <ion-label>30 Days</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Loading spinner -->
+    <div *ngIf="loading" class="loading-wrapper">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Loading data…</p>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && snapshots.length === 0" class="empty-state">
+      <ion-icon name="cloud-offline-outline" color="medium"></ion-icon>
+      <h3>No Data Yet</h3>
+      <p>Sensor snapshots are recorded every hour. Data will appear here once the first snapshot is captured.</p>
+    </div>
+
+    <div *ngIf="!loading && snapshots.length > 0">
+      <!-- Summary Stats Row -->
+      <h2 class="section-title">Summary</h2>
+      <ion-grid class="stats-grid">
+        <ion-row>
+          <!-- Temperature Stats -->
+          <ion-col size="6" size-md="4">
+            <div class="stat-card stat-temp">
+              <div class="stat-icon">
+                <ion-icon name="thermometer-outline"></ion-icon>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Temperature</span>
+                <span class="stat-value">{{ stats.tempAvg }}<small>°C avg</small></span>
+                <span class="stat-range">{{ stats.tempMin }}° – {{ stats.tempMax }}°</span>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Humidity Stats -->
+          <ion-col size="6" size-md="4">
+            <div class="stat-card stat-hum">
+              <div class="stat-icon">
+                <ion-icon name="water-outline"></ion-icon>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Humidity</span>
+                <span class="stat-value">{{ stats.humAvg }}<small>% avg</small></span>
+                <span class="stat-range">{{ stats.humMin }}% – {{ stats.humMax }}%</span>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Soil Moisture Stats -->
+          <ion-col size="6" size-md="4">
+            <div class="stat-card stat-soil">
+              <div class="stat-icon">
+                <ion-icon name="color-fill-outline"></ion-icon>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Soil Moisture</span>
+                <span class="stat-value">{{ stats.soilAvg }}<small>% avg</small></span>
+                <span class="stat-range">{{ stats.soilMin }}% – {{ stats.soilMax }}%</span>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Motion Count -->
+          <ion-col size="6" size-md="4">
+            <div class="stat-card stat-motion">
+              <div class="stat-icon">
+                <ion-icon name="walk-outline"></ion-icon>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Motion Events</span>
+                <span class="stat-value">{{ stats.motionCount }}<small>detections</small></span>
+                <span class="stat-range">of {{ snapshots.length }} readings</span>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Average Distance -->
+          <ion-col size="6" size-md="4">
+            <div class="stat-card stat-dist">
+              <div class="stat-icon">
+                <ion-icon name="analytics-outline"></ion-icon>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Avg Distance</span>
+                <span class="stat-value">{{ stats.avgDistance }}<small>cm</small></span>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Snapshot Count -->
+          <ion-col size="6" size-md="4">
+            <div class="stat-card stat-count">
+              <div class="stat-icon">
+                <ion-icon name="time-outline"></ion-icon>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Snapshots</span>
+                <span class="stat-value">{{ snapshots.length }}<small>total</small></span>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Climate Chart -->
+      <h2 class="section-title">Climate Trends</h2>
+      <ion-card class="chart-card">
+        <ion-card-header>
+          <ion-card-subtitle>Temperature &amp; Humidity over time</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="chart-wrapper">
+            <canvas baseChart
+              [data]="climateChartData"
+              [options]="climateChartOptions"
+              [type]="climateChartType">
+            </canvas>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Levels Chart -->
+      <h2 class="section-title">Sensor Levels</h2>
+      <ion-card class="chart-card">
+        <ion-card-header>
+          <ion-card-subtitle>Soil Moisture, Water, Steam &amp; Light</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="chart-wrapper">
+            <canvas baseChart
+              [data]="levelsChartData"
+              [options]="levelsChartOptions"
+              [type]="levelsChartType">
+            </canvas>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Data Table -->
+      <h2 class="section-title">Recorded Data</h2>
+      <ion-card class="table-card">
+        <ion-card-content>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Temp</th>
+                  <th>Hum</th>
+                  <th>Soil</th>
+                  <th>Light</th>
+                  <th>Water</th>
+                  <th>Steam</th>
+                  <th>Dist</th>
+                  <th>Motion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let s of snapshots.slice().reverse()">
+                  <td class="time-cell">{{ s.dateLabel }}</td>
+                  <td>{{ s.temperature }}°</td>
+                  <td>{{ s.humidity }}%</td>
+                  <td>{{ s.soilMoisture }}%</td>
+                  <td>{{ s.light }}%</td>
+                  <td>{{ s.waterLevel }}%</td>
+                  <td>{{ s.steam }}%</td>
+                  <td>{{ s.distance }}cm</td>
+                  <td>
+                    <ion-badge [color]="s.motion ? 'danger' : 'medium'">
+                      {{ s.motion ? 'Yes' : 'No' }}
+                    </ion-badge>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

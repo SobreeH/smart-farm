@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getDatabase, ref, onValue, set, remove } from 'firebase/database';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -9,7 +9,7 @@ import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/fire
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   // Variables to hold our sensor data
   sensors = {
     temperature: 0,
@@ -38,6 +38,10 @@ export class HomePage implements OnInit {
   // Guard against duplicate Firestore writes when RTDB fires multiple times
   private processingKeys = new Set<string>();
 
+  // Hourly snapshot interval reference
+  private snapshotInterval: any = null;
+  private sensorsReady = false;
+
   constructor() { }
 
   ngOnInit() {
@@ -55,6 +59,51 @@ export class HomePage implements OnInit {
     this.listenToSensors();
     this.listenToControls();
     this.bridgeLogsToFirestore();
+    this.startHourlyLogging();
+  }
+
+  ngOnDestroy() {
+    if (this.snapshotInterval) {
+      clearInterval(this.snapshotInterval);
+    }
+  }
+
+  /** Write a snapshot of all sensor readings to Firestore every hour */
+  startHourlyLogging() {
+    const ONE_HOUR_MS = 60 * 60 * 1000;
+
+    // Write an initial snapshot once sensor data has arrived
+    const waitForSensors = setInterval(() => {
+      if (this.sensorsReady) {
+        clearInterval(waitForSensors);
+        this.writeSensorSnapshot();
+      }
+    }, 2000); // check every 2 s
+
+    // Then repeat every hour
+    this.snapshotInterval = setInterval(() => {
+      this.writeSensorSnapshot();
+    }, ONE_HOUR_MS);
+  }
+
+  /** Persist current sensor values to Firestore `sensorSnapshots` collection */
+  private async writeSensorSnapshot() {
+    try {
+      await addDoc(collection(this.firestore, 'sensorSnapshots'), {
+        temperature: this.sensors.temperature,
+        humidity: this.sensors.humidity,
+        soilMoisture: this.sensors.soilHumidity,
+        light: this.sensors.light,
+        waterLevel: this.sensors.waterLevel,
+        steam: this.sensors.steam,
+        distance: this.sensors.distance,
+        motion: this.sensors.pir,
+        timestamp: serverTimestamp()
+      });
+      console.log('Sensor snapshot written to Firestore');
+    } catch (e) {
+      console.error('Error writing sensor snapshot:', e);
+    }
   }
 
   bridgeLogsToFirestore() {
@@ -95,6 +144,7 @@ export class HomePage implements OnInit {
       const data = snapshot.val();
       if (data) {
         this.sensors = data;
+        this.sensorsReady = true;
       }
     });
   }
